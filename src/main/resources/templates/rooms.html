@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>View Rooms</title>
+  </head>
+  
+  <body>
+    <h1>View Our Rooms</h1>
+    <table>
+  <tr><th>Name</th><th>Capacity</th><th>Projector</th><th>Whiteboard</th><th>Windows</th><th>Building</th></tr>
+  <tr th:each="room : ${rooms}">
+    <td th:text="${room.name}"></td>
+    <td th:text="${room.capacity}"></td>
+    <td th:text="${room.hasProjector ? 'Yes' : 'No'}"></td>
+    <td th:text="${room.hasWhiteboard ? 'Yes' : 'No'}"></td>
+    <td th:text="${room.hasWindows ? 'Yes' : 'No'}"></td>
+    <td th:text="${room.building}"></td>
+  </tr>
+</table>
+<br>
+<a href="/">Back</a>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Reservation Form</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+
+<body>
+<h1>Reserve a Room</h1>
+
+<!-- Room Search form -->
+<form th:action="@{/rooms/search}" method="GET">
+  <fieldset>
+    <legend>Search Available Rooms</legend>
+
+    <label for="capacity">Min Capacity:</label>
+    <input type="number" id="capacity" name="capacity" th:value="${capacity}" min="1" style="width: 60px;" />
+
+    <label for="date">Date:</label>
+    <input type="date" id="searchDate" name="date"
+           th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
+
+    <label for="startTime">Start time:</label>
+    <input type="time" id="startTime" name="startTime"
+           th:value="${#temporals.format(startTime, 'HH:mm')}" />
+
+    <label for="endTime">End time:</label>
+    <input type="time" id="endTime" name="endTime"
+           th:value="${#temporals.format(endTime, 'HH:mm')}" />
+
+    <label for="building">Building:</label>
+    <input type="text" id="building" name="building" th:value="${building}" placeholder="Building" />
+
+    <label>
+      <input type="checkbox" name="hasProjector" value="true"
+             th:checked="${hasProjector}" /> Projector
+    </label>
+    <label>
+      <input type="checkbox" name="hasWhiteboard" value="true"
+             th:checked="${hasWhiteboard}" /> Whiteboard
+    </label>
+    <label>
+      <input type="checkbox" name="hasWindows" value="true"
+             th:checked="${hasWindows}" /> Windows
+    </label>
+
+    <button type="submit">Search</button>
+    <br/>
+    <div th:if="${error}" class="validationError" style="color:red;">
+    <p th:text="${error}"></p>
+  </div>
+  </fieldset>
+</form>
+<!-- Available Rooms Table -->
+  <table th:if="${!#lists.isEmpty(rooms)}">
+    <thead>
+    <tr>
+      <th>Room Name</th>
+      <th>Building</th>
+      <th>Capacity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="room : ${rooms}">
+      <td th:text="${room.name}">Room Name</td>
+      <td th:text="${room.building}">Building</td>
+      <td th:text="${room.capacity}">Capacity</td>
+    </tr>
+    </tbody>
+  </table>
+
+<!-- Reservation form -->
+<div id="reservationSection th:if=${!#lists.isEmpty(rooms)}">
+  <form id="reservationForm" method="POST" th:action="@{/reserve}" th:object="${reservation}">
+    <div th:if="${#fields.hasErrors()}">
+      <span class="validationError">Please correct the problems below and resubmit.</span>
+    </div>
+    <label for="reservedBy">Your name:</label>
+    <input type="text" id="reservedBy" th:field="*{reservedBy}" />
+    <span class="validationError" th:if="${#fields.hasErrors('reservedBy')}" th:errors="*{reservedBy}">Name Error</span>
+    <br/>
+
+    <label for="room">Select Room:</label>
+    <select id="room" th:field="*{room}">
+      <option th:each="room : ${rooms}" th:value="${room.id}" th:text="${room.name}">Room Name</option>
+    </select>
+    <span class="validationError" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">Room Error</span>
+    <br/>
+    <!-- Grab date, start time, end time from search -->
+    <input type="hidden" name="date" th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
+    <input type="hidden" name="startTime" th:value="${#temporals.format(startTime, 'HH:mm')}" />
+    <input type="hidden" name="endTime" th:value="${#temporals.format(endTime, 'HH:mm')}" />
+
+    <span class="validationError" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Date Error</span>
+    <br/>
+    <span class="validationError" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}">Start Time Error</span>
+    <br/>
+    <span class="validationError" th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}">End Time Error</span>
+    <br/>
+
+    <br/>
+    <input type="submit" value="Make Reservation" />
+    <br/>
+    <div th:if="${#fields.hasGlobalErrors()}">
+      <span class="validationError" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
+    </div>
+  </form>
+</div>
+<br />
+<a href="/">Back</a>
+</body>
+</html>

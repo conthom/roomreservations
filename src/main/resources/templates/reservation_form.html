@@ -47,11 +47,14 @@
 
     <button type="submit">Search</button>
     <br/>
-    <div th:if="${error}" class="validationError" style="color:red;">
+    <div th:if="${error}" class="validationError">
     <p th:text="${error}"></p>
   </div>
   </fieldset>
 </form>
+<!-- No rooms message -->
+<p th:if="${#lists.isEmpty(rooms)}">There are no available rooms that match your search, try a different time or specification.</p>
+
 <!-- Available Rooms Table -->
   <table th:if="${!#lists.isEmpty(rooms)}">
     <thead>
@@ -71,7 +74,8 @@
   </table>
 
 <!-- Reservation form -->
-<div id="reservationSection th:if=${!#lists.isEmpty(rooms)}">
+<div th:if="${!#lists.isEmpty(rooms)}">
+  <h2>Select a room:</h2>
   <form id="reservationForm" method="POST" th:action="@{/reserve}" th:object="${reservation}">
     <div th:if="${#fields.hasErrors()}">
       <span class="validationError">Please correct the problems below and resubmit.</span>
@@ -87,17 +91,14 @@
     </select>
     <span class="validationError" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">Room Error</span>
     <br/>
-    <!-- Grab date, start time, end time from search -->
+    <!-- Grab date, start time, end time from search box -->
     <input type="hidden" name="date" th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
     <input type="hidden" name="startTime" th:value="${#temporals.format(startTime, 'HH:mm')}" />
     <input type="hidden" name="endTime" th:value="${#temporals.format(endTime, 'HH:mm')}" />
 
-    <span class="validationError" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Date Error</span>
-    <br/>
-    <span class="validationError" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}">Start Time Error</span>
-    <br/>
-    <span class="validationError" th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}">End Time Error</span>
-    <br/>
+    <span class="validationError" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Date Error </span>
+    <span class="validationError" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}">Start Time Error </span>
+    <span class="validationError" th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}">End Time Error </span>
 
     <br/>
     <input type="submit" value="Make Reservation" />

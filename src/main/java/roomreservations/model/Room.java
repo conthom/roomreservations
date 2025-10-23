@@ -21,5 +21,4 @@ public class Room {
     private boolean hasWhiteboard;
 	private boolean hasWindows;
 	private String building;
-
 }

@@ -9,7 +9,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findByDate(LocalDate date);
     // Query to find conflicting reservations when creating a new reservation
     @Query("SELECT r FROM Reservation r WHERE r.room.id = :roomId AND r.date = :date "
             + "AND r.startTime < :endTime AND r.endTime > :startTime")

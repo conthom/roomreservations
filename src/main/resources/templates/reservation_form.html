@@ -8,6 +8,14 @@
 
 <body>
 <h1>Reserve a Room</h1>
+<!-- Log in page or greeting -->
+<div th:if="${loggedInAs != null}" class="greeting">
+  <p>Hi, <span th:text="${loggedInAs.firstName}">User</span>!</p>
+</div>
+
+<div th:if="${loggedInAs == null}" class="signin-prompt">
+  <a th:href="@{/login(redirect=${currentUri})}">Please sign in to reserve</a>
+</div>
 
 <!-- Room Search form -->
 <form th:action="@{/rooms/search}" method="GET">
@@ -47,16 +55,17 @@
 
     <button type="submit">Search</button>
     <br/>
-    <div th:if="${error}" class="validationError">
-    <p th:text="${error}"></p>
-  </div>
+    <div th:if="${error}">
+      <span th:text="${error}" class="validationError">Error</span>
+    </div>
+
   </fieldset>
 </form>
 <!-- No rooms message -->
 <p th:if="${#lists.isEmpty(rooms)}">There are no available rooms that match your search, try a different time or specification.</p>
 
 <!-- Available Rooms Table -->
-  <table th:if="${!#lists.isEmpty(rooms)}">
+  <table th:if="${!#lists.isEmpty(rooms)}" id="roomsTable">
     <thead>
     <tr>
       <th>Room Name</th>
@@ -65,7 +74,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="room : ${rooms}">
+    <tr th:each="room : ${rooms}" th:data-room-id="${room.id}">
       <td th:text="${room.name}">Room Name</td>
       <td th:text="${room.building}">Building</td>
       <td th:text="${room.capacity}">Capacity</td>
@@ -75,27 +84,19 @@
 
 <!-- Reservation form -->
 <div th:if="${!#lists.isEmpty(rooms)}">
-  <h2>Select a room:</h2>
-  <form id="reservationForm" method="POST" th:action="@{/reserve}" th:object="${reservation}">
+  <form id="reservationForm" method="POST" th:action="@{/}" th:object="${reservation}">
     <div th:if="${#fields.hasErrors()}">
       <span class="validationError">Please correct the problems below and resubmit.</span>
     </div>
-    <label for="reservedBy">Your name:</label>
-    <input type="text" id="reservedBy" th:field="*{reservedBy}" />
-    <span class="validationError" th:if="${#fields.hasErrors('reservedBy')}" th:errors="*{reservedBy}">Name Error</span>
-    <br/>
-
-    <label for="room">Select Room:</label>
-    <select id="room" th:field="*{room}">
-      <option th:each="room : ${rooms}" th:value="${room.id}" th:text="${room.name}">Room Name</option>
-    </select>
-    <span class="validationError" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">Room Error</span>
-    <br/>
     <!-- Grab date, start time, end time from search box -->
     <input type="hidden" name="date" th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
     <input type="hidden" name="startTime" th:value="${#temporals.format(startTime, 'HH:mm')}" />
     <input type="hidden" name="endTime" th:value="${#temporals.format(endTime, 'HH:mm')}" />
-
+    <input type="hidden" th:field="*{reservedBy}" />
+    <input type="hidden" id="selectedRoom" th:field="*{room}" />
+    <!-- Errors -->
+    <span class="validationError" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">Room Error</span>
+    <span class="validationError" th:if="${#fields.hasErrors('reservedBy')}" th:errors="*{reservedBy}">Name Error</span>
     <span class="validationError" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Date Error </span>
     <span class="validationError" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}">Start Time Error </span>
     <span class="validationError" th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}">End Time Error </span>
@@ -108,7 +109,36 @@
     </div>
   </form>
 </div>
-<br />
-<a href="/">Back</a>
+<br/>
+<div th:if="${successMessage}" class="successMessage">
+  <p th:text="${successMessage}"></p>
+  <p>
+    Room: <span th:text="${reservationDetails.room.name}"></span>,
+    Date: <span th:text="${#temporals.format(reservationDetails.date, 'yyyy-MM-dd')}"></span>,
+    Time: <span th:text="${#temporals.format(reservationDetails.startTime, 'HH:mm')}"></span> -
+    <span th:text="${#temporals.format(reservationDetails.endTime, 'HH:mm')}"></span>,
+    Reserved by: <span th:text="${reservationDetails.reservedBy}"></span>
+  </p>
+</div>
+<a href="/index">Back</a>
+<script>
+  const table = document.getElementById('roomsTable');
+  const hiddenInput = document.getElementById('selectedRoom');
+  let selectedRow = null;
+
+  table.querySelectorAll('tbody tr').forEach(row => {
+    row.addEventListener('click', () => {
+      // Remove highlight from previous selection
+      if (selectedRow) {
+        selectedRow.classList.remove('selected');
+      }
+      // Highlight current selection
+      row.classList.add('selected');
+      selectedRow = row;
+      // Update hidden input with room ID
+      hiddenInput.value = row.dataset.roomId;
+    });
+  });
+</script>
 </body>
 </html>

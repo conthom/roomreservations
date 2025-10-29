@@ -1,4 +1,4 @@
-span.validationError {
+.validationError {
 	color: red;
 }
 table {
@@ -29,3 +29,24 @@ tr:hover {
       border-radius: 10px;
       background-color: #fafafa;
     }
+.greeting, .signin-prompt {
+    margin: 20px 0;
+}
+tr.selected {
+    background-color: #b3d4fc;
+}
+tr:hover {
+    cursor: pointer;
+    background-color: #e0e0e0;
+}
+tr.selected:hover {
+    background-color: cornflowerblue;
+}
+.successMessage {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}

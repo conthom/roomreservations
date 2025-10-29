@@ -6,8 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -19,7 +18,8 @@ public class RoomControllerTest {
 	void testRooms() throws Exception 	{
 		mockMvc.perform(get("/rooms"))
 				.andExpect(status().isOk())
-				.andExpect(view().name("rooms"));
+				.andExpect(view().name("rooms"))
+				.andExpect(model().attributeExists("rooms"));
 
 	}
 }

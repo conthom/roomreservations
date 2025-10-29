@@ -22,7 +22,6 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
     private String reservedBy;
     @NotNull(message = "Date is required, select above inside search box")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

@@ -17,6 +17,10 @@ import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ReservationControllerTest {
@@ -25,6 +29,11 @@ public class ReservationControllerTest {
 
 	@Test
 	void testReservations() throws Exception 	{
-
+		mockMvc.perform(get("/"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("reservation_form"))
+				.andExpect(model().attributeExists("reservation"))
+				.andExpect(model().attributeExists("reservations"))
+				.andExpect(model().attributeExists("rooms"));
 	}
 }

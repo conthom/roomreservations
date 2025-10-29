@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import roomreservations.AuthService;
 import roomreservations.data.ReservationRepository;
 import roomreservations.data.RoomRepository;
 import roomreservations.model.Reservation;
@@ -22,10 +23,13 @@ public class RoomController {
 
 	private final RoomRepository roomRepository;
 	private final ReservationRepository reservationRepository;
+	private final AuthService authService;
 
-	public RoomController(RoomRepository roomRepository, ReservationRepository reservationRepository) {
+
+	public RoomController(RoomRepository roomRepository, ReservationRepository reservationRepository, AuthService authService) {
 		this.roomRepository = roomRepository;
 		this.reservationRepository = reservationRepository;
+		this.authService = authService;
 	}
 
 	@GetMapping
@@ -64,6 +68,8 @@ public class RoomController {
 		rooms = rooms.stream()
 				.filter(room -> reservationRepository.findConflictingReservations(room.getId(), date, startTime, endTime).isEmpty())
 				.toList();
+		// Get signed in user
+		model.addAttribute("loggedInAs", authService.getLoggedInUser());
 
 		// Add rooms to model and initialize reservations
 		model.addAttribute("rooms", rooms);

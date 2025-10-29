@@ -69,7 +69,7 @@ public class ReservationController {
 			model.addAttribute("loggedInAs", null);
 			return "reservation_form";
 		}
-		// Validate the reservation manually (optional additional checks)
+		// Validate the reservation
 		Room room = reservation.getRoom();
 		if (room == null || room.getId() == null) {
 			bindingResult.rejectValue("room", "reservation.room.required", "Please select a room");
@@ -102,7 +102,7 @@ public class ReservationController {
 		// Save the reservation
 		reservationRepository.save(reservation);
 		// Add flash attributes for success message
-		redirectAttributes.addFlashAttribute("successMessage", "Reservation successfully made!");
+		redirectAttributes.addFlashAttribute("successMessage", "Reservation successfully made");
 		redirectAttributes.addFlashAttribute("reservationDetails", reservation);
 		return "redirect:/";
 	}

@@ -22,8 +22,7 @@ public class LoginController {
     }
 
     @GetMapping
-    public String showLoginForm(@RequestParam(value = "redirect", required = false) String redirect, Model model) {
-        model.addAttribute("redirect", redirect);
+    public String showLoginForm(Model model) {
         return "login"; // loads html template
     }
 

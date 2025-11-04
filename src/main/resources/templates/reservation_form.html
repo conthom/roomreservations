@@ -11,10 +11,11 @@
 <!-- Log in page or greeting -->
 <div th:if="${loggedInAs != null}" class="greeting">
   <p>Hi, <span th:text="${loggedInAs.firstName}">User</span>!</p>
+  <a th:href="@{/myreservations}">View and cancel your reservations</a>
 </div>
 
 <div th:if="${loggedInAs == null}" class="signin-prompt">
-  <a th:href="@{/login(redirect=${currentUri})}">Please sign in to reserve</a>
+  <a th:href="@{/login}">Please sign in to reserve</a>
 </div>
 
 <!-- Room Search form -->
@@ -92,7 +93,10 @@
     <input type="hidden" name="date" th:value="${#temporals.format(date, 'yyyy-MM-dd')}" />
     <input type="hidden" name="startTime" th:value="${#temporals.format(startTime, 'HH:mm')}" />
     <input type="hidden" name="endTime" th:value="${#temporals.format(endTime, 'HH:mm')}" />
-    <input type="hidden" th:field="*{reservedBy}" />
+    <!-- Add logged in user to reservation if logged in -->
+    <input type="hidden" th:if="${loggedInAs != null}"
+           th:field="*{reservedBy.id}"
+           th:value="${loggedInAs.id}" />
     <input type="hidden" id="selectedRoom" th:field="*{room}" />
     <!-- Errors -->
     <span class="validationError" th:if="${#fields.hasErrors('room')}" th:errors="*{room}">Room Error</span>
@@ -117,7 +121,7 @@
     Date: <span th:text="${#temporals.format(reservationDetails.date, 'yyyy-MM-dd')}"></span>,
     Time: <span th:text="${#temporals.format(reservationDetails.startTime, 'HH:mm')}"></span> -
     <span th:text="${#temporals.format(reservationDetails.endTime, 'HH:mm')}"></span>,
-    Reserved by: <span th:text="${reservationDetails.reservedBy}"></span>
+    Reserved by: <span th:text="${reservationDetails.reservedBy.firstName}"></span>
   </p>
 </div>
 <a href="/index">Back</a>

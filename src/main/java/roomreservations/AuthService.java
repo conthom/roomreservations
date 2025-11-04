@@ -4,11 +4,15 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import roomreservations.data.UsersRepository;
 import roomreservations.model.Users;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
     private final UsersRepository usersRepository;
     private final HttpSession session;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthService(UsersRepository usersRepository, HttpSession session) {
         this.usersRepository = usersRepository;
@@ -16,10 +20,13 @@ public class AuthService {
     }
 
     public boolean authenticate(String username, String password) {
-        Users user =  usersRepository.findByUsernameAndPassword(username, password);
-        if (user != null){
-            session.setAttribute("loggedInAs", user);
-            return true;
+        Optional<Users> userOpt =  usersRepository.findByUsername(username);
+        if (userOpt.isPresent()){
+            Users user = userOpt.get();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                session.setAttribute("loggedInAs", user);
+                return true;
+            }
         }
         return false;
     }

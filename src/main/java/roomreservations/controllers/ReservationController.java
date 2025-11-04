@@ -40,7 +40,7 @@ public class ReservationController {
 		Reservation reservation = new Reservation();
 		Users loggedInUser = authService.getLoggedInUser();
 		if (loggedInUser != null) {
-			reservation.setReservedBy(loggedInUser.getFirstName());
+			reservation.setReservedBy(loggedInUser);
 		}
 		model.addAttribute("reservation", reservation);
 		model.addAttribute("reservations", reservationRepository.findAll());
@@ -48,6 +48,22 @@ public class ReservationController {
 		// rooms list
 		model.addAttribute("rooms", List.of());
 		return "reservation_form";
+	}
+
+	@GetMapping("/myreservations")
+	public String showMyReservations(Model model) {
+		Users loggedInUser = authService.getLoggedInUser();
+		if (loggedInUser == null) {
+			return "redirect:/login"; // redirect
+		}
+		List<Reservation> reservations = reservationRepository.findByReservedBy(loggedInUser);
+		model.addAttribute("reservations", reservations);
+		return "my_reservations";
+	}
+	@PostMapping("/reservations/cancel/{id}")
+	public String cancelReservation(@PathVariable Long id) {
+		reservationRepository.deleteById(id);
+		return "redirect:/myreservations";
 	}
 
 	@PostMapping
@@ -59,7 +75,7 @@ public class ReservationController {
 		// Get the logged-in user and pre-fill reservedBy
 		Users loggedInUser = authService.getLoggedInUser();
 		if (loggedInUser != null) {
-			reservation.setReservedBy(loggedInUser.getFirstName());
+			reservation.setReservedBy(loggedInUser);
 		}
 		if (loggedInUser == null) {
 			// Show error message

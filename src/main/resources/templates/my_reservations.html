@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Reservations</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+<body>
+
+<h1>My Reservations</h1>
+
+<table th:if="${!#lists.isEmpty(reservations)}" id="reservationsTable">
+    <thead>
+    <tr>
+        <th>Room Name</th>
+        <th>Building</th>
+        <th>Date</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Cancel</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="res : ${reservations}">
+        <td th:text="${res.room.name}">Room</td>
+        <td th:text="${res.room.building}">Building</td>
+        <td th:text="${#temporals.format(res.date, 'yyyy-MM-dd')}">Date</td>
+        <td th:text="${#temporals.format(res.startTime, 'HH:mm')}">Start</td>
+        <td th:text="${#temporals.format(res.endTime, 'HH:mm')}">End</td>
+        <td>
+            <form th:action="@{/reservations/cancel/{id}(id=${res.id})}" method="post">
+                <button type="submit">Cancel</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${#lists.isEmpty(reservations)}">You have no current reservations.</p>
+
+<a href="/index">Back</a>
+
+</body>
+</html>

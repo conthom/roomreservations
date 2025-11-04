@@ -18,6 +18,6 @@ INSERT OR IGNORE INTO room (id, name, capacity, has_projector, has_whiteboard, h
 VALUES (10, 'Creative Lab', 30, TRUE, TRUE, TRUE, 'Innovation Center');
 
 INSERT OR IGNORE INTO users (id, username, password, first_name)
-VALUES (1, 'conthom', 'passforme', 'Connor');
+VALUES (1, 'conthom', '$2a$10$hneRb3eeD/ZrHIqPX9ixWe0sAHq.pB8uN5GYgrb5JHNVbzv6K59Ju', 'Connor');
 INSERT OR IGNORE INTO users (id, username, password, first_name)
-VALUES (2, 'admin', 'admin123', 'Admin');
+VALUES (2, 'admin', '$2a$10$.SfjDdzGUOV1f6Hxi8/bdewwR2upRhSmbOfY9PbC81a51eCiytB1e', 'Admin');

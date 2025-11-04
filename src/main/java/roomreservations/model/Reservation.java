@@ -21,8 +21,9 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String reservedBy;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // user_id is the foreign key
+    private Users reservedBy;
     @NotNull(message = "Date is required, select above inside search box")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
